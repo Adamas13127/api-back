@@ -11,7 +11,8 @@ import { JwtStrategy } from './jwt.strategy';
     UsersModule,
     PassportModule,
     JwtModule.register({
-      secret: 'secret123', // idem dans jwt.strategy.ts
+      // ⚠️ IMPORTANT : ce secret doit être le même partout (AuthService, JwtStrategy)
+      secret: process.env.JWT_SECRET || 'secret123',
       signOptions: { expiresIn: '1h' },
     }),
   ],

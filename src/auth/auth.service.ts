@@ -97,7 +97,8 @@ export class AuthService {
   ) {
     const payload = { sub: userId, email, role };
     return this.jwtService.signAsync(payload, {
-      secret: process.env.JWT_SECRET || 'dev-secret',
+      // ⚠️ même secret que JwtModule.register et JwtStrategy
+      secret: process.env.JWT_SECRET || 'secret123',
       expiresIn: '1h',
     });
   }
