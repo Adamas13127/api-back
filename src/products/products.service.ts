@@ -1,3 +1,5 @@
+// Service qui encapsule toutes les opérations métiers sur les produits.
+// Il parle directement à la base via le repository TypeORM.
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -12,27 +14,32 @@ export class ProductsService {
     private readonly repo: Repository<Product>,
   ) {}
 
+  // CREATE : crée un nouveau produit à partir du DTO
   async create(dto: CreateProductDto) {
     const product = this.repo.create(dto as Partial<Product>);
     return this.repo.save(product);
   }
 
+  // READ ALL : retourne la liste des produits (triés par id décroissant)
   findAll() {
     return this.repo.find({ order: { id: 'DESC' } });
   }
 
+  // READ ONE : récupère un produit par id ou lève une 404
   async findOne(id: number) {
     const item = await this.repo.findOne({ where: { id } });
     if (!item) throw new NotFoundException(`Product ${id} not found`);
     return item;
   }
 
+  // UPDATE : fusionne les nouvelles données avec l'entité existante
   async update(id: number, dto: UpdateProductDto) {
     const existing = await this.findOne(id);
     const merged = this.repo.merge(existing, dto as Partial<Product>);
     return this.repo.save(merged);
   }
 
+  // DELETE : supprime un produit et renvoie un indicateur simple
   async remove(id: number) {
     const existing = await this.findOne(id);
     await this.repo.remove(existing);

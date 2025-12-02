@@ -1,3 +1,5 @@
+// Contrôleur REST pour la ressource Product.
+// Il expose des routes publiques de lecture et des routes protégées pour la gestion admin.
 import {
   Controller,
   Get,

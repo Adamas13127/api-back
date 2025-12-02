@@ -1,3 +1,6 @@
+// Guard d'autorisation basé sur les rôles.
+// Il fonctionne avec le décorateur @Roles pour restreindre certaines routes
+// à des profils spécifiques (ex: admin seulement).
 import { Injectable, CanActivate, ExecutionContext } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { ROLES_KEY } from './roles.decorator';
@@ -13,7 +16,8 @@ export class RolesGuard implements CanActivate {
       context.getClass(),
     ]);
 
-    // Si aucune règle => accès libre (on laisse JwtAuthGuard faire le taf éventuel)
+    // Si aucune règle de rôle n'est définie, on laisse l'accès
+    // (seul JwtAuthGuard éventuellement s'appliquera).
     if (!requiredRoles || requiredRoles.length === 0) {
       return true;
     }
@@ -23,6 +27,7 @@ export class RolesGuard implements CanActivate {
 
     if (!user) return false;
 
+    // Vérifie que le rôle de l'utilisateur fait partie des rôles requis
     return requiredRoles.includes(user.role);
   }
 }

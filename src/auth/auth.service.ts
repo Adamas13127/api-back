@@ -1,3 +1,8 @@
+// Service qui contient toute la logique métier liée à l'authentification :
+// - inscription
+// - login
+// - gestion des refresh tokens
+// - génération et stockage des tokens JWT
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
@@ -13,7 +18,8 @@ export class AuthService {
     private readonly jwtService: JwtService,
   ) {}
 
-  // REGISTER
+  // REGISTER : crée un nouvel utilisateur avec rôle "user" par défaut,
+  // puis renvoie directement les tokens pour le connecter automatiquement.
   async register(dto: RegisterDto) {
     const user = await this.usersService.create({
       email: dto.email,
@@ -25,7 +31,8 @@ export class AuthService {
     return this.generateAndStoreTokens(user.id, user.email, user.role);
   }
 
-  // LOGIN
+  // LOGIN : vérifie les identifiants (email + mot de passe) via UsersService,
+  // puis renvoie un couple access/refresh token si tout est OK.
   async login(dto: LoginDto) {
     const user = await this.usersService.findByEmail(dto.email);
     if (!user) throw new UnauthorizedException('Invalid credentials');
@@ -37,7 +44,8 @@ export class AuthService {
     return this.generateAndStoreTokens(user.id, user.email, user.role);
   }
 
-  // REFRESH TOKEN
+  // REFRESH TOKEN : vérifie que le refresh token est valide
+  // et correspond bien à celui stocké en base pour l'utilisateur.
   async refreshTokens(dto: RefreshTokenDto) {
     const { refreshToken } = dto;
 

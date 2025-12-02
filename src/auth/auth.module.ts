@@ -1,3 +1,6 @@
+// Module d'authentification.
+// Il regroupe le contrôleur, le service, la stratégie JWT et
+// configure JwtModule pour signer les tokens.
 import { Module } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
