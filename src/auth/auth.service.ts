@@ -21,6 +21,7 @@ export class AuthService {
       role: 'user',
     });
 
+    // 🔥 on renvoie maintenant tokens + user
     return this.generateAndStoreTokens(user.id, user.email, user.role);
   }
 
@@ -32,6 +33,7 @@ export class AuthService {
     const isValid = await bcrypt.compare(dto.password, user.password);
     if (!isValid) throw new UnauthorizedException('Invalid credentials');
 
+    // 🔥 idem : tokens + user
     return this.generateAndStoreTokens(user.id, user.email, user.role);
   }
 
@@ -57,13 +59,14 @@ export class AuthService {
       }
 
       // Tout est OK → on génère un nouveau couple de tokens
+      // 🔥 là aussi on renvoie également user (ce n'est pas gênant)
       return this.generateAndStoreTokens(user.id, user.email, user.role);
     } catch (e) {
       throw new UnauthorizedException('Refresh token invalid or expired');
     }
   }
 
-  // Génère access + refresh et stocke le refresh en DB
+  // Génère access + refresh, stocke le refresh en DB, et renvoie aussi l'user
   private async generateAndStoreTokens(
     userId: number,
     email: string,
@@ -75,9 +78,15 @@ export class AuthService {
     // on enregistre le refresh token pour ce user
     await this.usersService.updateRefreshToken(userId, refreshToken);
 
+    // 🔥 NOUVEAU : on renvoie aussi les infos user
     return {
       accessToken,
       refreshToken,
+      user: {
+        userId,
+        email,
+        role,
+      },
     };
   }
 
