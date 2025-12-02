@@ -29,14 +29,17 @@ import { Throttle } from '@nestjs/throttler';
     TypeOrmModule.forRootAsync({
       inject: [ConfigService],
       useFactory: (config: ConfigService) => ({
-        type: 'mysql',
+        type: 'postgres',
         host: config.get<string>('DB_HOST'),
-        port: parseInt(config.get<string>('DB_PORT') ?? '3306', 10),
+        port: parseInt(config.get<string>('DB_PORT') ?? '5432', 10),
         username: config.get<string>('DB_USER'),
         password: config.get<string>('DB_PASS') || undefined,
         database: config.get<string>('DB_NAME'),
         synchronize: true,
         autoLoadEntities: true,
+        ssl: {
+          rejectUnauthorized: false,
+        },
       }),
     }),
 
