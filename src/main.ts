@@ -6,7 +6,6 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
-  // CORS pour ton front Vercel
   app.enableCors({
     origin: ['https://api-front-k1nhgt6pj-semmaches-projects.vercel.app'],
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
@@ -15,12 +14,9 @@ async function bootstrap() {
     exposedHeaders: ['Content-Length', 'X-Knowledge-Base'],
   });
 
-  // 👉 Prefix global pour l'API, MAIS on exclut Swagger
-  app.setGlobalPrefix('api/v1', {
-    exclude: ['docs', 'docs-json'], // <– routes Swagger sans prefix
-  });
+  // Prefix global
+  app.setGlobalPrefix('api/v1');
 
-  // Validation DTO partout
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,
@@ -29,7 +25,7 @@ async function bootstrap() {
     }),
   );
 
-  // 🧾 Swagger config
+  // ⚙️ Swagger
   const config = new DocumentBuilder()
     .setTitle('Shop API')
     .setDescription('API de gestion de produits avec authentification JWT')
@@ -49,11 +45,14 @@ async function bootstrap() {
 
   const document = SwaggerModule.createDocument(app, config);
 
-  // 👉 Swagger servie sur /docs (sans prefix)
-  SwaggerModule.setup('docs', app, document, {
-    swaggerOptions: {
-      persistAuthorization: true,
-    },
+  SwaggerModule.setup('api/docs', app, document, {
+    // 👉 on force l’utilisation des fichiers depuis un CDN
+    customCssUrl:
+      'https://unpkg.com/swagger-ui-dist@5/swagger-ui.css',
+    customJs: [
+      'https://unpkg.com/swagger-ui-dist@5/swagger-ui-bundle.js',
+      'https://unpkg.com/swagger-ui-dist@5/swagger-ui-standalone-preset.js',
+    ],
   });
 
   await app.listen(process.env.PORT || 3000);
