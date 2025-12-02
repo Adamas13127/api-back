@@ -8,12 +8,12 @@ async function bootstrap() {
 
   // front
   app.enableCors({
-    origin: 'https://api-back-umber.vercel',
+    origin: 'https://api-back-umber.vercel/',
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
     credentials: true,
   });
 
-  // Prefix global pour toutes les routes
+  // route prefix
   app.setGlobalPrefix('api/v1');
 
   // Validation des DTO partout
