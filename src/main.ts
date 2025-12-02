@@ -6,12 +6,13 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
-  // front
   app.enableCors({
-    origin: 'https://api-back-umber.vercel/',
-    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
+    origin: ['https://api-front-k1nhgt6pj-semmaches-projects.vercel.app/'],
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
     credentials: true,
-  });
+    allowedHeaders: ['Content-Type', 'Authorization', 'x-app-version'],
+    exposedHeaders: ['Content-Length', 'X-Knowledge-Base'],
+});
 
   // route prefix
   app.setGlobalPrefix('api/v1');
