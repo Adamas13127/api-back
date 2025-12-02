@@ -8,7 +8,7 @@ async function bootstrap() {
 
   // front
   app.enableCors({
-    origin: 'http://localhost:5173',
+    origin: 'https://api-back-umber.vercel',
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
     credentials: true,
   });
